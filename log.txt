@@ -1,0 +1,5 @@
+2021-10-26 10:26:44 | https://website.com/home | SUCCESS | Message
+2021-10-26 10:26:54 | https://website.com/about | SUCCESS | Message
+2021-10-26 10:27:01 | https://website.com/page | ERROR | Message
+2021-10-26 10:27:03 | https://website.com/user/me | SUCCESS | Message
+2021-10-26 10:27:04 | https://website.com/settings/ | ERROR | Message
