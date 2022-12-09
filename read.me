@@ -1,0 +1,26 @@
+Created: 11-21-22
+
+Directories       Description
+
+cxl          -    CXL flit analyzer
+                  This has C code which uses C structs to parse CXL TLP/DLLP/ALMP headers
+                  cxl.h             has all the structs
+                  cxl_texts.h       has all annotation for the key fields in the struct
+           
+hiop         -    Host Input/Output Processor  (CXL.io)
+                  hiop/logs_sapai_bhs_cadence/hiop.log    Config register R/W log from BIOS enumeration
+
+doc          -    CXL.IO memory map.pptx     Notes about CXL.io memory map used in COSIM
+                  cxl_memory_map.xlsx        CXL1.1 and CXL2.0 memory map and DVSEC structs
+
+specs        -    CXL1.1, CXL2.0 specs
+                  PCIE Gen-6 specs
+
+utilities    -    To be created for parsing hiop.log to annotate it to understand BIOS execution by mapping register offsets to mnemonics
+                  Look for extendeded capabilities in PCIE spec
+                  Look for DVSEC infor in CXL sepc
+                  
+read.me      -    This file
+
+
+
