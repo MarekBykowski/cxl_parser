@@ -1,6 +1,57 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+/* user-defined header files */
+#include <kernel_types.h>
+#include <pci.h>
+#include <pci_regs.h>
+#include <debug_or_not.h>
+
+/**
+ * Based on:
+ *	arch/x86/pci/mmconfig_64.c
+ *	include/linux/pci.h
+ *	include/uapi/linux/pci_regs.h
+ */
+
+#define PCI_byte_BAD 0
+#define PCI_word_BAD (pos & 1)
+#define PCI_dword_BAD (pos & 3)
+
+#define PCI_OP_READ(size, type, len) \
+int __attribute__((__noinline__)) pci_read_config_##size		\
+		(FILE *fp, int pos, type *value)			\
+{									\
+	int res;							\
+	u32 data = 0;							\
+									\
+	if (PCI_##size##_BAD) return PCIBIOS_BAD_REGISTER_NUMBER;	\
+	res = fseek(fp, (unsigned long)pos, SEEK_SET);			\
+	if (res) {							\
+		fprintf(stderr, "fseek failed: %s\n", strerror(res));	\
+		return PCIBIOS_BAD_REGISTER_NUMBER;			\
+	}								\
+	res = fread(&data, len, 1, fp);					\
+	pr_debug("fp=%p data=%x res=%d\n", fp, data, res);		\
+	if (0 == res)							\
+		PCI_SET_ERROR_RESPONSE(value);				\
+	else {								\
+		*value = (type)data;					\
+		pr_debug("fp=%p value=%x (from *value=(type)data)\n",	\
+			 fp, *value);					\
+	}								\
+									\
+	return !res;							\
+}
+
+PCI_OP_READ(byte, u8, 1)
+PCI_OP_READ(word, u16, 2)
+PCI_OP_READ(dword, u32, 4)
+
 /**
  * pci_find_next_ext_capability - Find an extended capability
- * @dev: PCI device to query
+ * @fp: FILE pointer to query
  * @start: address at which to start looking (0 to start at beginning of list)
  * @cap: capability code
  *
@@ -9,12 +60,7 @@
  * not support it.  Some capabilities can occur several times, e.g., the
  * vendor-specific capability, and this provides a way to find them all.
  */
-u16 pci_find_next_ext_capability(void)
-{
-	return;
-}
-#if 0
-u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int cap)
+u16 pci_find_next_ext_capability(FILE *fp, u16 start, int cap)
 {
 	u32 header;
 	int ttl;
@@ -23,13 +69,14 @@ u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int cap)
 	/* minimum 8 bytes per capability */
 	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
 
-	if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)
+#define cfg_size 4096
+	if (cfg_size <= PCI_CFG_SPACE_SIZE)
 		return 0;
 
 	if (start)
 		pos = start;
 
-	if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
+	if (pci_read_config_dword(fp, pos, &header) != PCIBIOS_SUCCESSFUL)
 		return 0;
 
 	/*
@@ -47,10 +94,9 @@ u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int cap)
 		if (pos < PCI_CFG_SPACE_SIZE)
 			break;
 
-		if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
+		if (pci_read_config_dword(fp, pos, &header) != PCIBIOS_SUCCESSFUL)
 			break;
 	}
 
 	return 0;
 }
-#endif

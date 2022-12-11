@@ -10,10 +10,12 @@ __check_defined = \
 #	$(call check_defined, SRC)
 
 CC=gcc
-CFLAGS=-g -Wall `pkg-config --cflags --libs glib-2.0`
+CFLAGS=-g -Wall `pkg-config --cflags --libs glib-2.0` -I./include -L. -lkernelpci
+ARFLAGS=rcs
 
 SRC=ec_walker.c
 OBJ=$(SRC:.c=.o)
+LIB=libkernelpci.a
 APP=$(patsubst %.c,%,$(SRC))
 
 #$@ - output file/target
@@ -29,10 +31,13 @@ source_files:
 	$(call check_defined, SRC)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-#$(APP): $(OBJ)
-#	$(CC) -o $@ $^ $(CFLAGS)
+$(LIB): pci.o
+	ar $(ARFLAGS) $@ $^
+
+$(APP): $(OBJ) $(LIB)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -f *.o $(APP)
+	rm -f *.o *.a $(APP)
 
 .PHONY: all clean
