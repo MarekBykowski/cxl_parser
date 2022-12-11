@@ -1,2 +1,4 @@
-utilities/bin/
-utilities/dumps/
+utilities/bin/*
+!utilities/bin/.placeholder
+utilities/dumps/*
+!utilities/dumps/.placeholder
