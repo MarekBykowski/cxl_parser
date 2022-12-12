@@ -3,3 +3,4 @@ utilities/bin/*
 utilities/dumps/*
 !utilities/dumps/.placeholder
 **/cscope*
+**/*.o
