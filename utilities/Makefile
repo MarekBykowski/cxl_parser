@@ -1,4 +1,4 @@
-all: build
+all: build install
 
 build:
 	@make -C c-files
@@ -6,7 +6,7 @@ build:
 install:
 	@cp c-files/ec_walker bin
 
-parse:
+python_parse:
 	@cd python-files; ./parse_log.py
 
 clean:
