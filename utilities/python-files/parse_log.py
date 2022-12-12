@@ -11,6 +11,7 @@ memdump = open(OUTPUT, "w+b")
 addr_val = dict.fromkeys(range(0, 4096, 4),0)
 "dict with addresses and bytes post processing from the log"
 addr_bytes = {}
+i = 0
 
 """
  Parse Suhas's hiop log. Note it is formatted: address= key sth= value
@@ -26,10 +27,12 @@ for key, val in addr_val.items():
     dw = val.to_bytes(4, byteorder='little')
     "Fill in the dict upon it"
     addr_bytes.update({key: dw})
-    """and most importnatly write the bytes to a bin file
-       exactly as the memmory dump for config space for Linux pcie dev is"""
+    """and most importantly write the bytes to a bin file
+       exactly as the memory dump for config space for Linux pcie dev is"""
     memdump.write(val.to_bytes(4, byteorder='little'))
     "Print it. One may ignore it"
-    print(f'addr: {hex(key)} val: {hex(val)} {dw}')
+    if i % 50 == 0:
+        print(f'addr: {hex(key)} val: {hex(val)} {dw}')
+    i += 1
 
 memdump.close()
