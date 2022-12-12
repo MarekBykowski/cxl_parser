@@ -6,7 +6,9 @@
 #include <kernel_types.h>
 #include <pci.h>
 #include <pci_regs.h>
+/*#define DEBUG*/
 #include <debug_or_not.h>
+#include <cxlpci.h>
 
 /**
  * Based on:

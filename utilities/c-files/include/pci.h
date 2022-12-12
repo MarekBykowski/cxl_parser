@@ -30,6 +30,8 @@
 #define PCI_CFG_SPACE_EXP_SIZE	4096
 
 u16 pci_find_next_ext_capability(FILE *fp, u16 start, int cap);
+int pci_read_config_byte(FILE *fp, int where, u8 *val);
+int pci_read_config_word(FILE *fp, int where, u16 *val);
 int pci_read_config_dword(FILE *fp, int where, u32 *val);
 
 #endif
