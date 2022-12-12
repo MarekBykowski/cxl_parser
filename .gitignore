@@ -4,3 +4,5 @@ utilities/dumps/*
 !utilities/dumps/.placeholder
 **/cscope*
 **/*.o
+**/ec_walker
+**/libkernelpci.a
