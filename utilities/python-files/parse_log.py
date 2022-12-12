@@ -14,8 +14,8 @@ addr_bytes = {}
 i = 0
 
 """
- Parse Suhas's hiop log. Note it is formatted: address= key sth= value
- and fill in dict upon it. key and val are converted from string to hex.
+ Parse hiop log. Note it is formatted: address= key access= value and
+ fill in dict upon it. key and val are converted from string to hex.
 """
 for line in log_file.readlines():
     if line.startswith("address="):
@@ -23,14 +23,14 @@ for line in log_file.readlines():
         addr_val[int(key,16)] = int(val, 16)
 
 for key, val in addr_val.items():
-    "Return array of 4x bytes for val, little endian"
+    "Return array of 4x bytes for val in little endian"
     dw = val.to_bytes(4, byteorder='little')
     "Fill in the dict upon it"
     addr_bytes.update({key: dw})
-    """and most importantly write the bytes to a bin file
-       exactly as the memory dump for config space for Linux pcie dev is"""
+    """and most importantly memory dump the bytes to a bin file
+       exactly as seen in Linux for the config space for the PCIe devices """
     memdump.write(val.to_bytes(4, byteorder='little'))
-    "Print it. One may ignore it"
+    "Print the dumping or not... pretty verbose"
     if i % 50 == 0:
         print(f'addr: {hex(key)} val: {hex(val)} {dw}')
     i += 1
