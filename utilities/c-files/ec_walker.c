@@ -89,16 +89,15 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	printf("#### A list of all possible PCIe Extended Capabilites #####\n");
+	printf("# List of all PCIe Extended Capabilites\n");
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 	for (i = 0; i <= ARRAY_SIZE(ext_cap_types); i++) {
 		if (ext_cap_types[i] == NULL)
 			continue;
-		printf("EC[%x] -> %s\n", i, ext_cap_types[i]);
+		printf("\tEC[%x] -> %s\n", i, ext_cap_types[i]);
 	}
-	puts("\n");
 
-	printf("Processing config space=%s\n", argv[1]);
+	puts("\n");
 
 	fp = fopen(argv[1], "rb");
 	if (!fp) {
@@ -109,7 +108,9 @@ int main(int argc, char *argv[])
 	if (pci_read_config_dword(fp, 0, &header) != PCIBIOS_SUCCESSFUL)
 		return 0;
 
-	printf("vendor-device=%x\n", header);
+	printf("# Search for all the ECs for vendor:device \"%04x:%04x\" from mem-dumped config space \"%s\"\n",
+	       header & 0xffff, (header >> 16) & 0xffff, argv[1]);
+
 
 	while ((p = pci_find_next_ext_capability(fp, p, PCI_EXT_CAP_ID_DOE))) {
 	}
